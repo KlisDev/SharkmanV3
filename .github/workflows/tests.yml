@@ -116,6 +116,15 @@ jobs:
           xvfb_pid=$!
           trap 'kill "$xvfb_pid" 2>/dev/null || true' EXIT
           sleep 1
-          DISPLAY=:99 XDG_SESSION_TYPE=x11 SHARKMAN_XVFB_SMOKE=1 SHARKMAN_TEST_GUI=1 \
-            /tmp/sharkman-ci-venv/bin/python -m pytest
+          export DISPLAY=:99 XDG_SESSION_TYPE=x11
+          # Keep Tk interpreters out of the threaded engine-test process. Each
+          # GUI smoke test gets a fresh process; none of the checks are removed.
+          SHARKMAN_XVFB_SMOKE=0 SHARKMAN_TEST_GUI=0 \
+            /tmp/sharkman-ci-venv/bin/python -X faulthandler -m pytest
+          SHARKMAN_XVFB_SMOKE=1 SHARKMAN_TEST_GUI=0 \
+            /tmp/sharkman-ci-venv/bin/python -X faulthandler -m pytest -v tests/test_linux_xvfb.py
+          for gui_test in tests/test_image_inspector.py tests/test_mac_gui.py; do
+            SHARKMAN_XVFB_SMOKE=0 SHARKMAN_TEST_GUI=1 \
+              /tmp/sharkman-ci-venv/bin/python -X faulthandler -m pytest -v "$gui_test"
+          done
           /tmp/sharkman-ci-venv/bin/ruff check sharkman tests tools easy_run.py ../LINUX ../MAC

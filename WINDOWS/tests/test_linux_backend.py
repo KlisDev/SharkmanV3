@@ -216,10 +216,27 @@ def test_missing_shape_extension_disables_only_visible_overlay(backend, monkeypa
     fake_overlay = types.ModuleType("overlay")
     fake_overlay.X11Overlay = lambda _root: (_ for _ in ()).throw(RuntimeError("Shape absent"))
     fake_overlay.NullOverlay = lambda: fallback
-    monkeypatch.setitem(sys.modules, "overlay", fake_overlay)
+    monkeypatch.setattr(linux, "_overlay_module", lambda: fake_overlay)
 
     result = backend.create_overlay(None)
 
     assert result is fallback
     assert not backend.overlay_supported
     assert "Shape absent" in backend.overlay_error
+
+
+def test_overlay_loads_its_sibling_without_launcher_path(tmp_path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(sys, "path", [
+        entry for entry in sys.path if entry != str(ROOT / "LINUX")
+    ])
+    # An unrelated top-level module must not be mistaken for our overlay.
+    monkeypatch.setitem(sys.modules, "overlay", types.ModuleType("overlay"))
+    linux._overlay_module.cache_clear()
+    try:
+        module = linux._overlay_module()
+        assert module.__file__ == str(ROOT / "LINUX" / "overlay.py")
+        assert module.NullOverlay().visible is False
+        assert callable(module.X11Overlay)
+    finally:
+        linux._overlay_module.cache_clear()

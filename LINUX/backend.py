@@ -1,11 +1,13 @@
 """Sober/X11 window, capture, hotkey, and virtual Space-key adapter."""
 from __future__ import annotations
 
+import importlib.util
 import os
 import re
 import threading
 import time
 from collections.abc import Callable, Iterator
+from functools import lru_cache
 from pathlib import Path
 
 import mss
@@ -17,6 +19,18 @@ from sharkman.models import WindowInfo
 SOBER_CLASSES = {"sober", "org.vinegarhq.sober"}
 MIN_CLIENT_WIDTH = 400
 MIN_CLIENT_HEIGHT = 300
+
+
+@lru_cache(maxsize=1)
+def _overlay_module():
+    """Load our sibling, independent of cwd, launcher sys.path, or name collisions."""
+    path = Path(__file__).resolve().with_name("overlay.py")
+    spec = importlib.util.spec_from_file_location("sharkman_linux_overlay", path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load Linux overlay: {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def _window_name(window: object) -> str:
@@ -325,14 +339,14 @@ class LinuxX11Backend(PlatformBackend):
         return unbind
 
     def create_overlay(self, root: object) -> object:
-        from overlay import NullOverlay, X11Overlay
+        overlay = _overlay_module()
 
         try:
-            return X11Overlay(root)
+            return overlay.X11Overlay(root)
         except Exception as exc:
             self.overlay_supported = False
             self.overlay_error = str(exc)
-            return NullOverlay()
+            return overlay.NullOverlay()
 
     def close(self) -> None:
         try:
