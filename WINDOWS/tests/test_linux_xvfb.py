@@ -28,6 +28,7 @@ def test_x11_client_capture_focus_and_overlay_do_not_change_meter_pixels() -> No
     overlay = None
     try:
         window = backend.find_window("Sober")
+        assert (window.left, window.top) == (50, 50)
         assert (window.width, window.height) == (640, 480)
         assert backend.activate_window(window)
         profile = CalibrationProfile(name="xvfb")

@@ -149,7 +149,8 @@ class LinuxX11Backend(PlatformBackend):
                     attributes = window.get_attributes()
                     if attributes.map_state != 2:  # X.IsViewable
                         continue
-                    absolute = window.translate_coords(root, 0, 0)
+                    # Xlib translates FROM the argument TO the receiver (root).
+                    absolute = root.translate_coords(window, 0, 0)
                     candidates.append((_sober_priority(window), geometry.width * geometry.height, window,
                                        _window_name(window), geometry, absolute))
                 except Exception:
@@ -207,7 +208,7 @@ class LinuxX11Backend(PlatformBackend):
                 root = self._display.screen().root
                 client = self._display.create_resource_object("window", window.handle)
                 geometry = client.get_geometry()
-                absolute = client.translate_coords(root, 0, 0)
+                absolute = root.translate_coords(client, 0, 0)
                 if (int(absolute.x), int(absolute.y), int(geometry.width), int(geometry.height)) != (
                     window.left, window.top, window.width, window.height,
                 ):

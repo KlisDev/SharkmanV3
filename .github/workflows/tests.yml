@@ -92,18 +92,20 @@ jobs:
               apt-get update
               DEBIAN_FRONTEND=noninteractive apt-get install -y \
                 python3 python3-venv python3-dev python3-tk gcc git xvfb \
-                libgl1 libglib2.0-0
+                libgl1 libglib2.0-0 libxrandr2
               ;;
             fedora)
               dnf install -y python3 python3-pip python3-devel python3-tkinter \
-                gcc git xorg-x11-server-Xvfb mesa-libGL glib2
+                gcc git xorg-x11-server-Xvfb mesa-libGL glib2 libXrandr
               ;;
             arch)
               pacman -Syu --noconfirm python python-pip tk gcc git \
-                xorg-server-xvfb mesa glib2
+                xorg-server-xvfb mesa glib2 libxrandr
               ;;
           esac
       - uses: actions/checkout@v4
+      - name: Trust this container checkout for Git privacy checks
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Install in an isolated environment
         run: |
           python3 -m venv /tmp/sharkman-ci-venv

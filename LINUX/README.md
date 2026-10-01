@@ -17,9 +17,9 @@ run the smoke test. Package names for common distributions:
 
 | Distribution | System packages |
 | --- | --- |
-| Ubuntu/Debian | `sudo apt install python3 python3-venv python3-tk` (`xvfb` for tests) |
-| Fedora | `sudo dnf install python3 python3-pip python3-tkinter` (`xorg-x11-server-Xvfb` for tests) |
-| Arch | `sudo pacman -S python python-pip tk` (`xorg-server-xvfb` for tests) |
+| Ubuntu/Debian | `sudo apt install python3 python3-venv python3-tk libxrandr2` (`xvfb` for tests) |
+| Fedora | `sudo dnf install python3 python3-pip python3-tkinter libXrandr` (`xorg-x11-server-Xvfb` for tests) |
+| Arch | `sudo pacman -S python python-pip tk libxrandr` (`xorg-server-xvfb` for tests) |
 
 Choose an X11/Xorg session at the login screen and confirm `echo
 $XDG_SESSION_TYPE` prints `x11`. Install Sober from Flathub if needed

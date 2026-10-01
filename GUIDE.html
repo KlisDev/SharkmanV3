@@ -83,9 +83,9 @@ py -3 -m tkinter</code></pre><p>You should see Python 3.11 or newer, followed by
   <ol class="steps">
     <li><h3>Install Python, Tk, and build prerequisites</h3><p>Use the block for your distribution. These commands install system prerequisites; the source launcher later installs the app’s Python packages in its own environment.</p>
       <details open><summary>Ubuntu / Debian</summary><pre><code>sudo apt update
-sudo apt install python3 python3-venv python3-pip python3-tk python3-dev gcc libgl1 libglib2.0-0</code></pre></details>
-      <details open><summary>Fedora</summary><pre><code>sudo dnf install python3 python3-pip python3-devel python3-tkinter gcc mesa-libGL glib2</code></pre></details>
-      <details open><summary>Arch Linux</summary><pre><code>sudo pacman -Syu python python-pip tk base-devel mesa glib2</code></pre><p class="fine">This also performs Arch’s normal system upgrade. Review the package manager’s proposed changes before confirming.</p></details>
+sudo apt install python3 python3-venv python3-pip python3-tk python3-dev gcc libgl1 libglib2.0-0 libxrandr2</code></pre></details>
+      <details open><summary>Fedora</summary><pre><code>sudo dnf install python3 python3-pip python3-devel python3-tkinter gcc mesa-libGL glib2 libXrandr</code></pre></details>
+      <details open><summary>Arch Linux</summary><pre><code>sudo pacman -Syu python python-pip tk base-devel mesa glib2 libxrandr</code></pre><p class="fine">This also performs Arch’s normal system upgrade. Review the package manager’s proposed changes before confirming.</p></details>
       <p>Check Python and Tk:</p><pre><code>python3 --version
 python3 -m tkinter</code></pre><p>Python must be <strong>3.11+</strong> (3.12 is the project reference version). Close the Tk window. If your distribution supplies an older Python, use its supported upgrade process; do not replace system Python manually.</p></li>
     <li><h3>Log into an X11 desktop</h3><p>Save your work and log out. At the login screen, choose an available <strong>X11</strong> or <strong>Xorg</strong> desktop session. The menu and available sessions depend on your distribution. After logging in, run:</p><pre><code>echo "$XDG_SESSION_TYPE"</code></pre><p>The result should be <code>x11</code>. If it says <code>wayland</code>, do not continue to live use. If no X11 session is available, this Linux adapter cannot run on your current desktop setup. Do not fake the check by changing environment variables.</p></li>

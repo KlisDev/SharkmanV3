@@ -15,13 +15,15 @@ linux = _load("sharkman_linux_backend_contract", ROOT / "LINUX" / "backend.py")
 
 
 class FakeWindow:
-    def __init__(self, identity: int, title: str, classes=(), *, parent=None, width=640, height=480):
+    def __init__(self, identity: int, title: str, classes=(), *, parent=None, width=640, height=480,
+                 x=0, y=0):
         self.id = identity
         self.title = title
         self.classes = classes
         self.parent = parent
         self.children: list[FakeWindow] = []
         self.width, self.height = width, height
+        self.x, self.y = x, y
         self.focused = False
         if parent is not None:
             parent.children.append(self)
@@ -41,8 +43,17 @@ class FakeWindow:
     def get_attributes(self):
         return SimpleNamespace(map_state=2)
 
-    def translate_coords(self, _root, _x, _y):
-        return SimpleNamespace(x=120, y=80)
+    def _root_position(self):
+        if self.parent is None:
+            return self.x, self.y
+        px, py = self.parent._root_position()
+        return px + self.x, py + self.y
+
+    def translate_coords(self, source, x, y):
+        # Match Xlib: source-local coordinates become receiver-local coordinates.
+        sx, sy = source._root_position()
+        dx, dy = self._root_position()
+        return SimpleNamespace(x=sx + x - dx, y=sy + y - dy)
 
     def get_full_property(self, atom, _type):
         if atom == "RESOURCE_MANAGER":
@@ -61,7 +72,8 @@ class FakeWindow:
 class FakeDisplay:
     def __init__(self):
         self.root = FakeWindow(1, "root")
-        self.sober = FakeWindow(2, "Roblox", ("sober", "org.vinegarhq.Sober"), parent=self.root)
+        self.sober = FakeWindow(2, "Roblox", ("sober", "org.vinegarhq.Sober"), parent=self.root,
+                                x=120, y=80)
         self.child = FakeWindow(3, "", parent=self.sober, width=100, height=100)
         self.root.active = self.child.id
         self.windows = {1: self.root, 2: self.sober, 3: self.child}
@@ -108,6 +120,25 @@ def test_sober_class_finds_client_even_when_title_is_roblox(backend) -> None:
     backend._display.sober.width = 640
     backend._display.root.active = 1
     assert not backend.is_foreground(window)
+
+
+def test_client_coordinates_include_reparenting_and_movement_disarms(backend) -> None:
+    display = backend._display
+    decoration = FakeWindow(4, "frame", parent=display.root, x=30, y=40)
+    display.root.children.remove(display.sober)
+    display.sober.parent = decoration
+    decoration.children.append(display.sober)
+    display.windows[4] = decoration
+
+    window = backend.find_window("Sober")
+
+    assert (window.left, window.top) == (150, 120)
+    assert backend.is_foreground(window)
+    decoration.x += 10
+    assert not backend.is_foreground(window)
+    rebound = backend.find_window("Sober")
+    assert (rebound.left, rebound.top) == (160, 120)
+    assert backend.is_foreground(rebound)
 
 
 def test_sober_class_beats_a_larger_unrelated_roblox_title(backend) -> None:
