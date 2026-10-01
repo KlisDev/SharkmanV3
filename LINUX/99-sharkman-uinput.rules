@@ -1,0 +1,3 @@
+# Allow active local users to create the SharkmanV3 virtual Space device.
+KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"
+

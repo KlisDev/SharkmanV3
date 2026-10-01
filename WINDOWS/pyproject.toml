@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sharkman-v3"
+dynamic = ["version"]
+description = "Calibrated screen-reading timing assistant for the Blox Fruits Sharkman Master challenge"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "KlisDev"}]
+dependencies = [
+  "customtkinter==5.2.2",
+  "mss==10.1.0",
+  "numpy==2.4.4",
+  "opencv-python==4.13.0.92",
+  "Pillow==12.2.0",
+  "keyboard==0.13.5; platform_system == 'Windows'",
+]
+
+[project.optional-dependencies]
+linux = [
+  "evdev==1.9.2",
+  "python-xlib==0.33",
+  "pynput==1.8.1",
+]
+dev = [
+  "pytest==9.1.1",
+  "pytest-cov==7.0.0",
+  "ruff==0.16.8",
+]
+
+[project.scripts]
+sharkman = "sharkman.__main__:main"
+sharkman-replay = "sharkman.replay:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sharkman*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "sharkman.__version__"}
+
+[tool.setuptools.package-data]
+sharkman = ["assets/calibration/*.png", "assets/calibration/README.md", "assets/adaptive/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# Keep CI focused on correctness, imports, and common bug patterns. Platform
+# adapters intentionally contain best-effort broad exception guards because
+# optional OS APIs and window enumeration can fail independently.
+select = ["E4", "E7", "E9", "F", "I", "B"]

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "profile_id": "00000000-0000-0000-0000-000000000001",
+  "name": "Sanitized 0917 replay fixture",
+  "platform": "replay",
+  "window_title": "fixture",
+  "fingerprint": {
+    "width": 30,
+    "height": 568,
+    "dpi": 96,
+    "display_mode": "replay"
+  },
+  "meter_roi": {
+    "left": 0.0,
+    "top": 0.0,
+    "right": 1.0,
+    "bottom": 1.0
+  },
+  "samples": {
+    "green": [{"rgb": [45, 255, 24], "tolerance": 85}],
+    "marker": [{"rgb": [3, 5, 5], "tolerance": 55}],
+    "track": [
+      {"rgb": [220, 40, 5], "tolerance": 80},
+      {"rgb": [244, 220, 25], "tolerance": 80}
+    ]
+  },
+  "detection": {
+    "safe_zone_inset": 0.15,
+    "required_confidence": 0.62,
+    "min_track_height_fraction": 0.42,
+    "min_colored_fraction": 0.9,
+    "min_marker_width_fraction": 0.52,
+    "marker_darkness_ratio": 0.42,
+    "min_zone_height_px": 3,
+    "max_zone_height_fraction": 0.42
+  },
+  "timing_overrides": {},
+  "created_at": "2026-09-19T00:00:00+00:00",
+  "updated_at": "2026-09-19T00:00:00+00:00"
+}
+

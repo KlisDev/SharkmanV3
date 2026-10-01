@@ -1,0 +1,6 @@
+mss==10.1.0
+customtkinter==5.2.2
+numpy==2.4.4
+opencv-python==4.13.0.92
+Pillow==12.2.0
+keyboard==0.13.5; platform_system == "Windows"

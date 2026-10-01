@@ -1,0 +1,4 @@
+-r ../WINDOWS/requirements.txt
+evdev==1.9.2
+python-xlib==0.33
+pynput==1.8.1

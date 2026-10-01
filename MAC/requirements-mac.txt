@@ -1,0 +1,8 @@
+-r ../WINDOWS/requirements.txt
+pyobjc-core==12.2.2; sys_platform == 'darwin'
+pyobjc-framework-Cocoa==12.2.2; sys_platform == 'darwin'
+pyobjc-framework-Quartz==12.2.2; sys_platform == 'darwin'
+pyobjc-framework-CoreMedia==12.2.2; sys_platform == 'darwin'
+pyobjc-framework-ScreenCaptureKit==12.2.2; sys_platform == 'darwin'
+pyobjc-framework-ApplicationServices==12.2.2; sys_platform == 'darwin'
+pyobjc-framework-libdispatch==12.2.2; sys_platform == 'darwin'
